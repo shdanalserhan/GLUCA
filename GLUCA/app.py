@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 # Initialize Flask app, serving static files from 'static' folder
 app = Flask(__name__, static_folder='static')
 
+# Ensure the static directory exists for saving plots
+os.makedirs(app.static_folder, exist_ok=True)
+
 
 def compute_SI(age: float, sex: str, weight: float) -> tuple:
     """
