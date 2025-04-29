@@ -170,7 +170,11 @@ def simulator():
         )
 
         # Add bolus insulin to subcutaneous depot
-        G_inj, X_inj, I_inj, S_inj = sol_pre.y[:, -1]
+        # grab the last element of each state‐vector list
+        G_inj = sol_pre.y[0][-1]
+        X_inj = sol_pre.y[1][-1]
+        I_inj = sol_pre.y[2][-1]
+        S_inj = sol_pre.y[3][-1]
         S_inj += bolus_insulin
         y_inj = [G_inj, X_inj, I_inj, S_inj]
 
