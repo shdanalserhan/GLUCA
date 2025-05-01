@@ -43,8 +43,8 @@
         </ul>
     </nav>
     <div class="container">
-        <h1>Glucose-Insulin Simulator</h1>
-        <p>Enter your details below to simulate glucose-insulin dynamics and explore treatment scenarios.</p>
+        <h1>GLUCA: Glucose-Insulin Simulator</h1>
+        <p>Enter your details below to simulate glucose-insulin dynamics.</p>
         <form method="POST" action="/simulator" id="simulator-form">
             <!-- Meal Details -->
             <h2>Meal Details</h2>
@@ -82,7 +82,7 @@
             </div>
             <div class="input-group">
                 <label for="injection_time">Injection Time (min after start)</label>
-                <input type="number" id="injection_time" name="injection_time" min="0" max="240" step="1" required>
+                <input type="number" id="injection_time" name="injection_time" min="0.1" max="240" step="1" required>
             </div>
             <!-- Personal Info -->
             <h2>Personal Information</h2>
@@ -96,7 +96,6 @@
                 <select id="sex" name="sex" required>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
-                    <option value="Other">Other</option>
                 </select>
             </div>
             <div class="input-group">
