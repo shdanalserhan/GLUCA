@@ -11,18 +11,15 @@ import matplotlib.pyplot as plt
 # Initialize Flask app, serving static files from 'static' folder
 app = Flask(__name__, static_folder='static')
 
-# Ensure the static directory exists for saving plots
 os.makedirs(app.static_folder, exist_ok=True)
 
 
-def compute_SI(age: float, sex: str, weight: float) -> tuple:
+def compute_SI(age, sex, weight):
     """
     Compute insulin sensitivity (SI) and total daily dose (TDD).
-
     SI (mL/µU/min) is scaled by a reference sensitivity and user TDD.
     TDD (IU/day) is estimated based on age, sex, and weight per literature estimations (Lebbad et al.).
     """
-    # Total daily dose calculation differs by sex
     if sex.lower() == 'female':
         TDD = 16.87 - 0.59 * age + 0.53 * weight + 0.42 * age * weight / 100
     else:
