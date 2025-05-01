@@ -56,7 +56,7 @@ def u_glucose(t, carb_g, meal_time, tau= 30.0): #tau chosen as per literature re
     return (carb_mg / tau) * np.exp(-(t - meal_time) / tau)
 
 
-def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.02, ke=0.012):
+def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.02, ke=0.012): #ka,ke estimated; no lit vals; rough estimates based on Wilinska et al.
     """
     Four-state minimal model of glucose-insulin kinetics.
 
@@ -96,9 +96,7 @@ def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.02, ke=0.0
 
 def plot_time_series(t, y, xlabel, ylabel, title, filename, secondary_y=None):
     """
-    Plot a basic time series and save to file.
-
-    If 'secondary_y' is provided, overlay a second data series on a twin y-axis.
+    Plot a basic time series and save to file in static folder.
     """
     plt.figure(figsize=(10, 5))
     plt.plot(t, y, linewidth=2)
@@ -134,7 +132,7 @@ def simulator():
 
     if request.method == 'POST':
         try:
-            # Parse inputs from form
+            # Parse inputs from form/frontend
             age             = float(request.form['age'])
             sex             = request.form['sex']
             weight          = float(request.form['weight'])
@@ -146,21 +144,20 @@ def simulator():
             ctx['error'] = 'Please enter valid numbers in every field.'
             return render_template('simulator.html', **ctx)
 
-        # Compute patient-specific parameters
+        # Compute patient-specific parameters+display appropriately
         SI, TDD = compute_SI(age, sex, weight)
         ctx['SI']  = f"{SI:.4e} mL/µU/min"
         ctx['TDD'] = f"{TDD:.1f} IU/day"
 
-        # Solve ODE in two phases: before and after insulin bolus
+        # Solve ODE in two phases: before and after insulin bolus; reason being issues with responsivity in insulin curve; this appears to fix it
         t_final = 360  # Total simulation duration (min)
-        # High resolution around injection
         t_eval_pre = np.linspace(0, injection_time, 500)
         t_eval_post = np.linspace(injection_time, t_final, 1000)
 
-        # Initial state at t=0
+        # Initial values of params at t=0
         y0 = [80.0, 0.0, 12.2, 0.0]
 
-        # Phase 1: pre-injection
+        # Phase 1: pre-injection of insulin bolus
         sol_pre = solve_ivp(
             minimal_model_full,
             [0, injection_time],
@@ -170,7 +167,7 @@ def simulator():
         )
 
         # Add bolus insulin to subcutaneous depot
-        # grab the last element of each state‐vector list
+        # grab the last element of each state‐vector list to ensure seamless integration
         G_inj = sol_pre.y[0][-1]
         X_inj = sol_pre.y[1][-1]
         I_inj = sol_pre.y[2][-1]
@@ -191,7 +188,7 @@ def simulator():
         t_full = np.concatenate([sol_pre.t, sol_post.t])
         y_full = np.concatenate([sol_pre.y, sol_post.y], axis=1)
 
-        # File names with timestamp to avoid collisions
+        # File names with timestamp to avoid collisions in static folder
         ts = str(int(time.time()))
         files = {
             'glucose_plot':  f'static/glucose_{ts}.png',
