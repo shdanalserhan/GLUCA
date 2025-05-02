@@ -82,7 +82,7 @@ def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.02, ke=0.0
 
     # Input rates
     u2 = u_glucose(t, carb_amount, meal_time)
-    V_I = (0.15 * weight)    # Insulin distribution volume (dL) adjusted per BW
+    V_I = (0.15 * weight)*10    # Insulin distribution volume (dL) adjusted per BW
 
     # Differential equations
     dG_dt = -p1 * (G - G_b) - X * G + u2 / Vol_g
