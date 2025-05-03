@@ -56,7 +56,7 @@ def u_glucose(t, carb_g, meal_time, tau= 30.0): #tau chosen as per literature re
     return (carb_mg / tau) * np.exp(-(t - meal_time) / tau)
 
 
-def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.02, ke=0.012): #ka,ke estimated; no lit vals; rough estimates based on Wilinska et al.
+def minimal_model_full(t, y, SI, weight, carb_amount, meal_time, ka=0.026, ke=0.013): #ka,ke estimated; no lit vals; rough estimates based on Wilinska et al.
     """
     Four-state minimal model of glucose-insulin kinetics.
 
